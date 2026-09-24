@@ -1,138 +1,222 @@
-Создаю директорию `pack2` и делаю `uv build pack2`:
+# Cборка с ничего
+
+Не забываю про `uv venv` и создаю директорию `pack2` (естественно она пустая) и запуск `uv build pack2` даёт:
 
 ```shell
-╰─➤  uv build
+╰─➤  mkdir pack2
+(ch02) ╭─X@D ~/Projects/Learning-Python-Packaging/notes/ch02  ‹add-ch03*›
 ╰─➤  uv build pack2
 Building source distribution...
-error: Failed to build
-       `.../Learning-Python-Packaging/notes/ch02/pack2`
-  Caused by: .../Learning-Python-Packaging/notes/ch02/pack2
-             does not appear to be a Python project, as neither
-             `pyproject.toml` nor `setup.py` are present in the
-             directory
+error: Failed to build `~/Projects/Learning-Python-Packaging/notes/ch02/pack2`
+  Caused by: ~/Projects/Learning-Python-Packaging/notes/ch02/pack2 does not appear to be a Python project, as neither `pyproject.toml` nor `setup.py` are present in
+             the directory
 ```
 
-Понятно что делать - создаю `pyproject.toml` (ибо [PEP-621][pep621]) в директории `pack2`.
+Хорошо есть подсказка что нужно сделать, поэтому создаю (пока что пустосодержательный) файл "pyproject.toml" (ибо [PEP-621][pep621]) в директории "pack2".
 
 ```shell
-╰─➤  uv build pack2
+─➤  uv build pack2
 Building source distribution...
-warning: `.../Learning-Python-Packaging/notes/ch02/pack2` does not appear to be a Python project, as the `pyproject.toml` does not include a `[build-system]` table, and neither `setup.py` nor `setup.cfg` are present in the directory
+warning: `~/Projects/Learning-Python-Packaging/notes/ch02/pack2` does not appear to be a Python project, as the `pyproject.toml` does not include a `[build-system]` table, and neither `setup.py` nor `setup.cfg` are present in the directory
 running egg_info
-creating UNKNOWN.egg-info
-writing UNKNOWN.egg-info/PKG-INFO
-writing dependency_links to UNKNOWN.egg-info/dependency_links.txt
-writing top-level names to UNKNOWN.egg-info/top_level.txt
-writing manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-reading manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-writing manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-running sdist
-running egg_info
-writing UNKNOWN.egg-info/PKG-INFO
-writing dependency_links to UNKNOWN.egg-info/dependency_links.txt
-writing top-level names to UNKNOWN.egg-info/top_level.txt
-reading manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-writing manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-running check
+...
 warning: sdist: standard file not found: should have one of README, README.rst, README.txt, README.md
 
+running check
 warning: check: missing required meta-data: name
 
-creating unknown-0.0.0
-creating unknown-0.0.0/UNKNOWN.egg-info
-copying files to unknown-0.0.0...
-copying pyproject.toml -> unknown-0.0.0
-copying UNKNOWN.egg-info/PKG-INFO -> unknown-0.0.0/UNKNOWN.egg-info
-copying UNKNOWN.egg-info/SOURCES.txt -> unknown-0.0.0/UNKNOWN.egg-info
-copying UNKNOWN.egg-info/dependency_links.txt -> unknown-0.0.0/UNKNOWN.egg-info
-copying UNKNOWN.egg-info/top_level.txt -> unknown-0.0.0/UNKNOWN.egg-info
-Writing unknown-0.0.0/setup.cfg
-Creating tar archive
-removing 'unknown-0.0.0' (and everything under it)
+...
 Building wheel from source distribution...
 running egg_info
-writing UNKNOWN.egg-info/PKG-INFO
-writing dependency_links to UNKNOWN.egg-info/dependency_links.txt
-writing top-level names to UNKNOWN.egg-info/top_level.txt
-reading manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-writing manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-running bdist_wheel
-running build
-installing to build/bdist.linux-x86_64/wheel
-running install
-running install_egg_info
-running egg_info
-writing UNKNOWN.egg-info/PKG-INFO
-writing dependency_links to UNKNOWN.egg-info/dependency_links.txt
-writing top-level names to UNKNOWN.egg-info/top_level.txt
-reading manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-writing manifest file 'UNKNOWN.egg-info/SOURCES.txt'
-Copying UNKNOWN.egg-info to build/bdist.linux-x86_64/wheel/./UNKNOWN-0.0.0-py3.14.egg-info
-running install_scripts
-creating build/bdist.linux-x86_64/wheel/unknown-0.0.0.dist-info/WHEEL
-creating '.../Learning-Python-Packaging/notes/ch02/pack2/dist/.tmp-d729403z/unknown-0.0.0-py3-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
-adding 'unknown-0.0.0.dist-info/METADATA'
-adding 'unknown-0.0.0.dist-info/WHEEL'
-adding 'unknown-0.0.0.dist-info/top_level.txt'
-adding 'unknown-0.0.0.dist-info/RECORD'
-removing build/bdist.linux-x86_64/wheel
+...
+
 Successfully built pack2/dist/unknown-0.0.0.tar.gz
 Successfully built pack2/dist/unknown-0.0.0-py3-none-any.whl
 ```
 
-Это довольно-таки длинная простыня и предупреждения (warnings) достойны прочтения. С пустым "pyproject.toml" сделаешь ничего путного, но [руководство по написанию pyproject.toml][writepyproject] поможет. Файл пишу сам, чтобы поупражняться, а в качестве бэкэнда выбрал [setuptools][setuptools] по нескольким причинам:
+Хорошо, добавлю README.md и накину в pyproject.toml раздел:
 
-- старый, но зрелый и поддерживаемый проект (но это не главное);
-- он может посмотреть в файл "setup.py", в котором можно программно доуказать что и как ставить, особенно когда нужно установить расширения (например, C/C++), [Cython][cython]'изировать проект и т.п. - т.е. поиграться с ним сейчас мне выгодно, чтобы потом не заморачиваться со сборкой проектов, которые опираются на Cython чтобы писать на Python-подобном языке модули, которые будут переведены в Си-расширения (которые зачастую высокопроизводительнее чем природные Python модули)
-- а ещё к нему скатывается сборка проекта когда нет pyproject.toml или же в нём нет раздела build-backend (это обмолвлено в [первой главе](../ch01/pack1.md) моих заметок)
+```toml
+[build-system]
+requires = ["setuptools ~= 84.0"]  # the frontend should install them automatically
+build-backend = "setuptools.build_meta"  # the path to the backend program
 
-Перед сборкой проекта хорошо обратить внимание на предупржедения от прошлой сборки:
-1. создать файл README.md
-2. прописать name и requires-python поля в "pyproject.toml"
-3. обращать внимание на предупреждения при последующих сборках
+[project]
+name = "example"
+```
 
-А чтобы включить разные дополнительные файлы, используется файл "MANIFEST.in", он также будет включён и в sdist, и в wheel. Также прилагаю картинку из книги "Publishing Python Packages" (и снова без разрешения, но зато с указанием откуда, так что идите налево все любители авторского права):
+```shell
+╰─➤  uv build pack2
+Building source distribution...
+error: Failed to build `~/Projects/Learning-Python-Packaging/notes/ch02/pack2`
+  Caused by: Failed to parse: `pack2/pyproject.toml`
+  Caused by: TOML parse error at line 5, column 1
+      |
+    5 | [project]
+      | ^^^^^^^^^
+    `pyproject.toml` is using the `[project]` table, but the required `project.version` field is neither set nor present in the `project.dynamic` list
+```
 
-![MANIFEST.in directives](./manifest-directives.png)
+Добавлю версию в явном виде: `version = "0.0.2"`. На этот раз сборка идёт успешно. Но всё равно пока содержимое далеко от того, что есть в настоящих проектах, поэтому добавлю ещё надданных (метаданных):
 
-И да, "data/config.json" как не-Python файл, но прописанный в MANIFEST.in попал в издаток (sdist), но не попал в колесо (wheel) и это прравильно, потому что data не лежит внутри example, а значит не является данными пакета (package data), а значит и включать их в колесо незачем.
+```toml
+[project]
+name = "example"
+version = "0.0.2"
+authors = [
+    { name = "Author Name", email = "author@example.com" },
+]
+maintainers = [
+    { name = "Maintainer Name", email = "maintainer@example.com" },
+]
+description = "A sample Python package v2"
+requires-python = "~=3.14"
+readme = "README.md"
+keywords = ["building", "python", "packages"]
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: Free For Home Use",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Education",
+]
+dependencies = []
+```
 
-А ещё нейронка помогла в вопросе когда временно исключил директиву `global-include *.txt`, а в сборку "example/subpack/note.txt" всё равно попал и прилагаю её (Yandex Alice) ответ:
+И вывод стал отзывчивее:
 
-> Когда setuptools собирает sdist, он создаёт (или обновляет) папку example.egg-info/, а в ней — файл SOURCES.txt со списком всех файлов для sdist. При повторной сборке setuptools читает существующий SOURCES.txt и обновляет его, а не создаёт с нуля. 
-> 
-> Если вы ранее собирали sdist с правилом, включавшим note.txt (например, recursive-include example *.txt), то note.txt попал в SOURCES.txt. После удаления правила из MANIFEST.in и пересборки без очистки egg-info/ — старая запись осталась, и файл снова попал в архив. ([ссылка](https://github.com/tekumara/notes/blob/main/setuptools.md))
+```shell
+╰─➤  uv build pack2 --no-cache
+Building source distribution...
+/tmp/.tmpgOKvOh/builds-v0/.tmpKQ3f9e/lib/python3.14/site-packages/setuptools/config/_apply_pyprojecttoml.py:61: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+!!
 
-А ещё выручает `uv build --no-cache` - запускать сборку без учёта кэша. В общем, архивы оставлены, можно попытаться восстановить из них строение проекта, но точку опоры оставлю всё же:
+        ********************************************************************************
+        Please consider removing the following classifiers in favor of a SPDX license expression:
+
+        License :: Free For Home Use
+
+        See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+        ********************************************************************************
+
+!!
+```
+Столько ругани из-за `License :: Free For Home Use` - закомменчу чтоб не мозолило. А теперь желаю добавить pytest](https://docs.pytest.org/)
+чтобы запускать испыты (тесты) к проекту.
+
+```shell
+╰─➤  cd pack2
+(ch02) ╭─X@D ~/Projects/Learning-Python-Packaging/notes/ch02/pack2  ‹add-ch03*›
+╰─➤  uv add --group test pytest
+warning: `VIRTUAL_ENV=~/Projects/Learning-Python-Packaging/notes/ch02/.venv` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
+warning: The `requires-python` specifier (`~=3.14`) in `example` uses the tilde specifier (`~=`) without a patch version. This will be interpreted as `>=3.14, <4`. Did you mean `~=3.14.0` to constrain the version as `>=3.14.0, <3.15`? We recommend only using the tilde specifier with a patch version to avoid ambiguity.
+Using CPython 3.14.3
+Creating virtual environment at: .venv
+Resolved 7 packages in 276ms
+      Built example @ file:///.../Projects/Learning-Python-Packaging/notes/ch02/pack2                                                                        Prepared 1 package in 1.28s
+Installed 6 packages in 14ms
+ + example==0.0.2 (from file:///.../Projects/Learning-Python-Packaging/notes/ch02/pack2)
+ + iniconfig==2.3.0
+ + packaging==26.3
+ + pluggy==1.6.0
+ + pygments==2.21.0
+ + pytest==9.1.1
+```
+
+Ага, уже uv хочет определённости с версией интерпретатора, ладно, снабжу и заплаточную (patch) версию. Но что за "выскочка" про `--active`? А потому что директория виртуального окружения создана в
+"ch02", а `uv add` запускался из "pack2", а uv при добавлении зависимости создаёт такую же директорию ".venv" уже в "pack02" и происходит "непонятка": действующее окружение по пути к родительской диреткории, а ставится в окружение по текущему пути. Вот чтобы установка шла в родительскую директорию и не было создания директории виртуального окружения в текущей и требуется флаг `--active`.
+
+Ладно, с этим вроде решено, теперь создаю директорию "example", в ней простую функцию, а также директорию "tests" уже на уровне "example". Получаю простое деревце проекта.
 
 ```shell
 ╰─➤  tree
 .
-├── data
-│   └── conf.json
 ├── example
-│   ├── cli.py
 │   ├── __init__.py
-│   ├── __main__.py
-│   └── subpack
-│       ├── __init__.py
-│       ├── module.py
-│       └── note.txt
-├── LICENSE.md
-├── MANIFEST.in
+│   └── module.py
 ├── pyproject.toml
 ├── README.md
 ├── tests
 │   ├── __init__.py
-│   └── test_echo.py
+│   └── test_module.py
 └── uv.lock
 
-5 directories, 14 files
+3 directories, 7 files
 ```
 
-Успехов в распаковке.
+Вот это всё "господарство" и нужно собрать: `uv build` - и вытянуть архивы наружу да исследовать их содержимое.
 
-[pep621]: https://peps.python.org/pep-0621/
-[writepyproject]: https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
-[setuptools]: https://pypi.org/project/setuptools/
-[cython]: https://pypi.org/project/Cython/
+```shell
+╰─➤  tar -tzf dist/example-0.0.2.tar.gz | tree --fromfile
+.
+└── example-0.0.2
+    ├── example.egg-info
+    │   ├── dependency_links.txt
+    │   ├── PKG-INFO
+    │   ├── SOURCES.txt
+    │   └── top_level.txt
+    ├── PKG-INFO
+    ├── pyproject.toml
+    ├── README.md
+    ├── setup.cfg
+    └── tests
+        └── test_module.py
+
+4 directories, 9 files
+```
+
+Видно, что испыты (директория "tests") включены в "издаток" (sdist), а вот самих исходников-то и нет! Как же так?! Голову сломать, но ответ
+в официальной документации: [Package Discovery and Namespace Packages](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#flat-layout). Я же использую "плоский расклад" (flat layout), а setuptools при обнаружении (auto-discovery) файлов по умолчанию исключает некоторые директории, в частности
+["example"](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#setuptools.discovery.FlatLayoutPackageFinder.DEFAULT_EXCLUDE) - вот это подстава и прям так сразу, а я думал да что же такое, но хороший урок: читайте доку и осторожнее с "ходячими" именами. Получается, что нужно явно прописать обнаружение модуля
+example в "pyproject.toml`". Итого:
+
+```toml
+[build-system]
+requires = ["setuptools ~= 84.0"]  # the frontend should install them automatically
+build-backend = "setuptools.build_meta"  # the path to the backend program
+
+[project]
+name = "example"
+version = "0.0.2"
+authors = [
+    { name = "Author Name", email = "author@example.com" },
+]
+maintainers = [
+    { name = "Maintainer Name", email = "maintainer@example.com" },
+]
+description = "A sample Python package v2"
+requires-python = "~=3.14.0"
+readme = "README.md"
+keywords = ["building", "python", "packages"]
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    # SetuptoolsDeprecationWarning: License classifiers are deprecated.
+    # "License :: Free For Home Use",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Education",
+]
+dependencies = []
+
+[dependency-groups]
+test = [
+    "pytest>=9.1.1",
+]
+
+[tool.setuptools.packages.find]
+# The name "example" is a special one for the package.
+# Setuptools excludes it by default for a flat-layout packages.
+# https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#setuptools.discovery.FlatLayoutPackageFinder.DEFAULT_EXCLUDE
+include = ["example*"]
+```
+
+Итоги:
+
+- испыты попадают в sdist, но не в wheel - это нормально. У setuptools есть правила какие файлы включаются в "распред" (дистрибутив) и указаны они [здесь](https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html).
+- важно читать доку, в следующий раз выберу какое-нибудь "незаядлое" имя для проекта, чтобы меньше головомойки и матов при доискивании причин (даже нейронка не сразу просекла "что это было").
+
+Оставляю архивы, из которых вполне можно восстановить исходное строение проекта, а тажке обновил заметку по TOML из первой главы.
