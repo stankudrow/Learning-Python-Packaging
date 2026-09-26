@@ -12,7 +12,7 @@ error: Failed to build `~/Projects/Learning-Python-Packaging/notes/ch02/pack2`
              the directory
 ```
 
-Хорошо есть подсказка что нужно сделать, поэтому создаю (пока что пустосодержательный) файл "pyproject.toml" (ибо [PEP-621](https://peps.python.org/pep-0621/)) в директории "pack2".
+Хорошо, есть подсказка что нужно сделать, поэтому создаю (пока что пустосодержательный) файл "pyproject.toml" (ибо [PEP-621](https://peps.python.org/pep-0621/)) в директории "pack2".
 
 ```shell
 ─➤  uv build pack2
@@ -34,7 +34,7 @@ Successfully built pack2/dist/unknown-0.0.0.tar.gz
 Successfully built pack2/dist/unknown-0.0.0-py3-none-any.whl
 ```
 
-Хорошо, добавлю README.md и накину в pyproject.toml раздел:
+Хорошо, добавлю "README.md" и накину в "pyproject.toml" разделы:
 
 ```toml
 [build-system]
@@ -44,6 +44,8 @@ build-backend = "setuptools.build_meta"  # the path to the backend program
 [project]
 name = "example"
 ```
+
+И этого как будто достаточно (нет):
 
 ```shell
 ╰─➤  uv build pack2
@@ -57,7 +59,7 @@ error: Failed to build `~/Projects/Learning-Python-Packaging/notes/ch02/pack2`
     `pyproject.toml` is using the `[project]` table, but the required `project.version` field is neither set nor present in the `project.dynamic` list
 ```
 
-Добавлю версию в явном виде: `version = "0.0.2"`. На этот раз сборка идёт успешно. Но всё равно пока содержимое далеко от того, что есть в настоящих проектах, поэтому добавлю ещё надданных (метаданных):
+Добавлю ключ с версией в явном виде: `version = "0.0.2"` - пока про dynamic не стану распространяться. На этот раз сборка идёт успешно, но всё равно пока содержимое далеко от того, что есть в настоящих проектах, поэтому добавлю ещё метаданных:
 
 ```toml
 [project]
@@ -85,7 +87,7 @@ classifiers = [
 dependencies = []
 ```
 
-И вывод стал отзывчивее:
+И вывод стал гораздо предупредительнее:
 
 ```shell
 ╰─➤  uv build pack2 --no-cache
@@ -104,7 +106,7 @@ Building source distribution...
 !!
 ```
 
-Столько ругани из-за `License :: Free For Home Use` - закомменчу чтоб не отсвечивало. Теперь настала пора добавить тестовый фреймворк [pytest](https://docs.pytest.org/) чтобы определять и запускать испыты (тесты) к проекту.
+Столько ругани из-за `License :: Free For Home Use` - просто закомменчу это чтобы не отсвечивало. Теперь настала пора добавить тестовый фреймворк [pytest][pytest]:
 
 ```shell
 ╰─➤  cd pack2
@@ -125,10 +127,10 @@ Installed 6 packages in 14ms
  + pytest==9.1.1
 ```
 
-Ага, уже uv хочет определённости с версией интерпретатора, ладно, снабжу и заплаточную (patch) версию. Но что за "выскочка" про `--active`? А потому что директория виртуального окружения создана в
-"ch02", а `uv add` запускался из "pack2", а uv при добавлении зависимости создаёт такую же директорию ".venv" уже в "pack02" и происходит "непонятка": действующее окружение по пути к родительской диреткории, а ставится в окружение по текущему пути. Вот чтобы установка шла в родительскую директорию и не было создания директории виртуального окружения в текущей и требуется флаг `--active`.
+Ага, уже [uv][uv] хочет определённости с версией интерпретатора, поэтому в "pyproject.toml" снабжу требуемую версию Python заплаточной (patch) частью. Но что это за "выскочка" про `--active`? А потому что директория виртуального окружения создана в
+"ch02", а `uv add` запускался из "pack2", а uv при добавлении зависимости создаёт такую же директорию ".venv" уже в "pack02" и происходит "непонятка": действующее (активное) окружение ссылается на родительскую директорию, а зависимость проставляется в окружение по текущему пути ибо здесь тоже есть ".venv". Вот чтобы установка шла в родительскую директорию и не было создания ".venv" в текущей директории и требуется флаг `--active`.
 
-Ладно, с этим вроде решено, теперь создаю директорию "example", в ней простую функцию, а также директорию "tests" уже на уровне "example". Получаю простое деревце проекта.
+Ладно, с этим вроде решено, теперь создаю директорию "example", а в ней простой модуль с простой "эхо" функцией, а также директорию "tests" с испытами (тестами) для исходного кода. Получается простое деревце:
 
 ```shell
 ╰─➤  tree
@@ -146,7 +148,7 @@ Installed 6 packages in 14ms
 3 directories, 7 files
 ```
 
-Вот это всё "господарство" и нужно собрать: `uv build` - и вытянуть архивы наружу да исследовать их содержимое.
+Вот всю эту "деревянность" и нужно собрать (`uv build`):
 
 ```shell
 ╰─➤  tar -tzf dist/example-0.0.2.tar.gz | tree --fromfile
@@ -167,10 +169,15 @@ Installed 6 packages in 14ms
 4 directories, 9 files
 ```
 
-Видно, что испыты (директория "tests") включены в "издаток" (sdist), а вот самих исходников-то и нет! Как же так?! Голову сломать, но ответ
-в официальной документации: [Package Discovery and Namespace Packages](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#flat-layout). Я же использую "плоский расклад" (flat layout), а setuptools при обнаружении (auto-discovery) файлов по умолчанию исключает некоторые директории, в частности
-["example"](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#setuptools.discovery.FlatLayoutPackageFinder.DEFAULT_EXCLUDE) - вот это подстава и прям так сразу, а я думал да что же такое, но хороший урок: читайте доку и осторожнее с "ходячими" именами. Получается, что нужно явно прописать обнаружение модуля
-example в "pyproject.toml`". Итого:
+Видно, что директория "tests" включена в "издаток" (sdist), а вот самих исходников-то и нет! Как же так и чё за нах?! После поисков и сложенных матов, ответ нашёдся в официальной документации: [Package Discovery and Namespace Packages](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#flat-layout). И вот причины:
+
+- Использую "плоский расклад" (flat layout).
+- С таким раскладом приобнаружении (auto-discovery) файлов, [setuptools][setuptools] по умолчанию исключает некоторые директории, в частности
+["example"](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#setuptools.discovery.FlatLayoutPackageFinder.DEFAULT_EXCLUDE) - вот это подстава.
+
+Это хороший урок: *читайте доку и осторожнее с "ходячими" именами.* Чтобы всё-таки включать проект "example", как раз и нужно явно прописать обнаружение модуля "example" в файл "pyproject.toml`".
+
+Итого:
 
 ```toml
 [build-system]
@@ -216,7 +223,11 @@ include = ["example*"]
 
 Итоги:
 
-- Испыты попадают в sdist, но не в wheel - это нормально. У setuptools есть правила какие файлы включаются в "распред" (дистрибутив) и указаны они [здесь](https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html).
+- Испыты (тесты) попадают в sdist, но не в wheel - это нормально. У [setuptools][setuptools] есть правила какие файлы включаются в "распред" (дистрибутив) и указаны они [здесь](https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html).
 - Важно читать доку, поэтому в следующий раз выберу какое-нибудь "незаядлое" имя для проекта, чтобы меньше было головомойки и матов при доискивании причин (даже нейронка не сразу просекла "что это было" и "чего не так").
 
 Оставляю архивы, из которых вполне можно восстановить исходное строение проекта, а тажке обновил заметку по TOML из первой главы.
+
+[pytest]: https://docs.pytest.org/
+[setuptools]: https://setuptools.pypa.io/en/latest/index.html
+[uv]: https://docs.astral.sh/uv/
