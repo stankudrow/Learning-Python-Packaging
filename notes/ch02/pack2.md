@@ -6,6 +6,7 @@
 
 - [Сборка с ничего](#сборка-с-ничего)
 - [Итоги](#итоги)
+- [Ссылки](#ссылки)
 
 ### Сборка с ничего
 
@@ -233,6 +234,12 @@ include = ["example*"]
 - У [setuptools][setuptools] есть правила какие файлы включаются в "раздаток" (дистрибутив) и указаны они [здесь](https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html).
 
 Обязательно взгляните на [дополнительные материалы](./extra/epack2), там учтено именование пакета, но рассматриваются другие "трудности".
+
+### Ссылки
+
+- [Packaging Python Projects](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
+- [Writing your `pyproject.toml`](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#writing-pyproject-toml)
+- [Install packages in a virtual environment using pip and venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 
 [pytest]: https://docs.pytest.org/
 [setuptools]: https://setuptools.pypa.io/en/latest/index.html
