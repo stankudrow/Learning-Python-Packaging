@@ -163,9 +163,13 @@ Successfully built dist/echoer-0.1.0-py3-none-any.whl
 - Python Packaging User Guide:
 
   - [Создание виртуальных окружений](https://packaging.python.org/en/latest/tutorials/installing-packages/#creating-virtual-environments)
-  - [Словник (Глоссарий)](https://packaging.python.org/en/latest/glossary/)
-  - [Поток (Flow) сборки](https://packaging.python.org/en/latest/flow/)
+  - [Установка пакетов в виртуальное окружение через pip и venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
   - [Установка пакетов](https://packaging.python.org/en/latest/tutorials/installing-packages/)
+  - [Поток (Flow) сборки](https://packaging.python.org/en/latest/flow/)
+  - [Пишем свой pyproject.toml](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/)
+  - [Упаковка Python проектов](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
+  - [Точки входа (Entry Points)](https://packaging.python.org/en/latest/specifications/entry-points/#entry-points)
+  - [Словник (Глоссарий)](https://packaging.python.org/en/latest/glossary/)
 
 [build]: https://pypi.org/project/build/
 [pip]: https://pip.pypa.io/
