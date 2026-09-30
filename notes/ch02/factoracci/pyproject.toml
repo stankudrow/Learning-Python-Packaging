@@ -1,0 +1,98 @@
+[build-system]
+requires = ["setuptools~=84.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "factoracci"
+version = "0.1.0"
+description = "Implementations of factorial and Fibonacci algorithms"
+readme = "README.md"
+authors = [
+    { name = "Stanley Kudrow", email = "stankudrow@reply.no" }
+]
+requires-python = "~=3.14.0"
+dependencies = []
+
+# dev dependencies
+[dependency-groups]
+# uv add --group doc sphinx
+doc = [
+    "sphinx>=9.1.0",
+]
+# uv add --group lint ruff ty
+lint = [
+    "ruff>=0.16.9",
+    "ty>=0.0.84",
+]
+# uv add --group test pytest pytest-benchmark pytest-cov pytest-random-order
+test = [
+    "pytest>=9.1.1",
+    "pytest-benchmark>=5.3.0",
+    "pytest-cov>=7.1.0",
+    "pytest-random-order>=1.2.0",
+]
+
+# https://docs.pytest.org/en/stable/reference/customize.html
+[tool.pytest]
+minversion = "9.1"
+addopts = [
+    "--maxfail=2",
+    "--random-order"
+]
+testpaths = ["tests"]
+
+# https://docs.astral.sh/ruff/configuration/
+# https://docs.astral.sh/ruff/rules/
+[tool.ruff]
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+    "ANN",
+    "B",     # https://docs.astral.sh/ruff/default-rules/#flake8-bugbear-b
+    "C4",    # https://docs.astral.sh/ruff/default-rules/#flake8-comprehensions-c4
+    "D",     # https://docs.astral.sh/ruff/default-rules/#pydocstyle-d
+    "E",     # https://docs.astral.sh/ruff/default-rules/#pycodestyle-e-w
+    "F",     # https://docs.astral.sh/ruff/default-rules/#pydocstyle-d
+    "I",     # https://docs.astral.sh/ruff/default-rules/#isort-i
+    "ISC",   # https://docs.astral.sh/ruff/default-rules/#flake8-implicit-str-concat-isc
+    "N",     # https://docs.astral.sh/ruff/default-rules/#pep8-naming-n
+    "PERF",  # https://docs.astral.sh/ruff/default-rules/#perflint-perf
+    "PIE",   # https://docs.astral.sh/ruff/default-rules/#flake8-pie-pie
+    "PYI",   # https://docs.astral.sh/ruff/default-rules/#flake8-pyi-pyi
+    "PT",    # https://docs.astral.sh/ruff/default-rules/#flake8-pytest-style-pt
+    "RET",   # https://docs.astral.sh/ruff/default-rules/#flake8-return-ret
+    "RSE",   # https://docs.astral.sh/ruff/rules/#flake8-raise-rse
+    "RUF",   # https://docs.astral.sh/ruff/default-rules/#ruff-specific-rules-ruf
+    "SIM",   # https://docs.astral.sh/ruff/default-rules/#flake8-simplify-sim
+    "TC",    # https://docs.astral.sh/ruff/default-rules/#flake8-type-checking-tc
+    "TRY",   # https://docs.astral.sh/ruff/default-rules/#tryceratops-try
+    "UP",    # https://docs.astral.sh/ruff/default-rules/#pyupgrade-up
+    "W",     # https://docs.astral.sh/ruff/default-rules/#pycodestyle-e-w
+]
+ignore = [
+    "D203",  # https://docs.astral.sh/ruff/rules/incorrect-blank-line-before-class/
+    "D213",  # https://docs.astral.sh/ruff/rules/multi-line-summary-second-line/
+    "D413",  # https://docs.astral.sh/ruff/rules/missing-blank-line-after-last-section/
+]
+fixable = [
+    "I",       # isort (import sorting)
+    "RUF022",  # https://docs.astral.sh/ruff/rules/unsorted-dunder-all/
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+    "D104",  # https://docs.astral.sh/ruff/rules/undocumented-public-package/
+    "F401",  # https://docs.astral.sh/ruff/rules/unused-import/
+]
+"**/{tests,docs,tools}/*" = [
+    "D",  # # https://docs.astral.sh/ruff/default-rules/#pydocstyle-d
+]
+"*.ipynb" = [
+    "T20",  # https://docs.astral.sh/ruff/rules/#flake8-print-t20
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+# exclude = ["*.pyi"]
+quote-style = "double"
