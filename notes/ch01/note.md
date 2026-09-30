@@ -131,7 +131,7 @@ Successfully built dist/echoer-0.1.0-py3-none-any.whl
 
 Что видно в основе:
 
-1. Из-за setuptools, в пакете "echoer" создаётся echoer.egg-info - это равносильно созданию директории .dist-info (можно увидеть её в ".venv/bin/lib/python3.14/site-packages"). Это пасхалка к стародавним временам, когда setuptools подмял [distutils](https://docs.python.org/3.14/library/distutils.html#module-distutils) и предложил свой формат сборки - [яйца (eggs)](https://packaging.python.org/en/latest/glossary/#term-Egg). В итоге яйцам не удалось вкатиться в Python стандарт, потому что сообщество предложило формат Wheel ([PEP-427](https://peps.python.org/pep-0427/)), который и закатился в итоге.
+1. Из-за setuptools, в пакете "echoer" создаётся echoer.egg-info - это равносильно созданию директории .dist-info (можно увидеть её в ".venv/bin/lib/python3.14/site-packages"). Это пасхалка к стародавним временам, когда setuptools предложил свой формат сборки - [яйца (eggs)](https://packaging.python.org/en/latest/glossary/#term-Egg). В итоге яйцам не удалось вкатиться в Python стандарт, потому что сообщество предложило формат Wheel ([PEP-427](https://peps.python.org/pep-0427/)), который и закатился в итоге. А ещё setuptools был настолько хорош, что подмял [distutils](https://docs.python.org/3.14/library/distutils.html#module-distutils) чуть более чем полностью, на что был предложен [PEP-632](https://peps.python.org/pep-0632/), в котором и описали причины чёрной метки своему же сборщику.
 2. [Source distribution (sdist)](https://packaging.python.org/en/latest/glossary/#term-Source-Distribution-or-sdist) - архив ".tar.gz" с исходниками и метафайлами. Его можно и нужно переводить как "архив исходников", мне в порядке обзывать его даже как "исходниковый архив".
 3. Колесо ([wheel](https://packaging.python.org/en/latest/glossary/#term-Wheel)) - на это нацелен [pip][pip] и колесо считается стандартным форматом распространения (дистрибуции) Python пакетов. Также называется [built distribution (bdist)](https://packaging.python.org/en/latest/glossary/#term-Built-Distribution) и это не дистрибутив сборки, а собранный дистрибутив, потому что в колесе должно содержаться всё уже собранное, чтобы это просто поставить в систему.
 
@@ -156,7 +156,7 @@ Successfully built dist/echoer-0.1.0-py3-none-any.whl
 
 ![Python build system](Python-build-system.png)
 
-В дополнительных материалах найдёте заметку по формату [TOML](https://toml.io/en/v1.0.0) ("Tom's Obvious, Minimal Language" - формат для "pyproject.toml", введённый [PEP-621](https://peps.python.org/pep-0621/).
+В дополнительных материалах найдёте заметку по формату [TOML](https://toml.io/en/v1.0.0) ("Tom's Obvious, Minimal Language" - формат для "pyproject.toml" файла, введённого [PEP-621](https://peps.python.org/pep-0621/).
 
 ### Ссылки
 

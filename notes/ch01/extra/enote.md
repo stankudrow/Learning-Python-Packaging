@@ -1,6 +1,6 @@
 # Полёт на Jupyter
 
-В [Jypyter](https://jupyter-notebook.readthedocs.io/en/latest/) тетрадке (это не ноутбук, иначе был бы `jupyter laptop` вместо [`jupyter notebook`](https://jupyter-notebook.readthedocs.io/en/latest/notebook.html#starting-the-notebook-server)) [learning_toml.ipynb](./learning_toml.ipynb) описывается работа с [TOML][toml_docs] в действии (in action). Поскольку я пишу с опорой на Python>=3.11, а именно с этой версии в стандартную библиотеку подвезли библиотеку [tomllib](https://docs.python.org/3/library/tomllib.html), то меня не парило "возюкаться" со сторонней библиотекой [toml](https://pypi.org/project/toml/). Но всё же я решил это сделать и почти возрадовался, что всё может быть так легко и просто, как следующий запуск меня обломал:
+В [Jypyter](https://jupyter-notebook.readthedocs.io/en/latest/) тетрадке (это не ноутбук, иначе был бы `jupyter laptop` вместо [`jupyter notebook`](https://jupyter-notebook.readthedocs.io/en/latest/notebook.html#starting-the-notebook-server)) [learning_toml.ipynb](./learning_toml.ipynb) описывается работа с [TOML v1.0][toml_docs] в действии (in action). Поскольку в моём окружении Python>=3.11, а именно с этой версии в стандартную библиотеку и подвезли модуль [tomllib](https://docs.python.org/3/library/tomllib.html), то меня не парило "возюкаться" со сторонним решенеим [toml](https://pypi.org/project/toml/). Но всё же я решил засучить рукава и загразянить руки... и почти возрадовался, что всё может быть так легко и просто, как следующий запуск меня обломал:
 
 ```jupyter
 !pip install toml  # in Jupyter code cell
@@ -45,18 +45,16 @@ Creating virtual environment at: .venv
 Activate with: source .venv/bin/activate
 ```
 
-Затем нужно поставить пакет управления IPython ядрами ([ipykernel](https://pypi.org/project/ipykernel/)s) для Jupyter: `uv pip install ipykernel`. Ядро - это работающий процесс, который умеет исполнять код в ячейках (cells) в Jupyter, хранить состояние между запусками ячеек и т.п. Ядро - это не просто Python, это именно [IPython ядро](https://ipython.readthedocs.io/en/latest/development/how_ipython_works.html#the-ipython-kernel), которому нужен путь к Python чтобы исполднять пайтоновский код (всё просто).
+Затем нужно поставить пакет управления IPython ядрами ([ipykernel](https://pypi.org/project/ipykernel/)s) для Jupyter: `uv pip install ipykernel`. Ядро - это работающий процесс, который умеет исполнять код в ячейках (cells) в Jupyter, хранить состояние между запусками ячеек и т.п. Ядро - это не просто Python, это именно [IPython ядро](https://ipython.readthedocs.io/en/latest/development/how_ipython_works.html#the-ipython-kernel), или скорее даже [IPython сессия](https://ipython.readthedocs.io/en/stable/overview.html). Остаётся зарегистрировать ядро (грубо говоря, Python), причём лишь для моей учётной пользовательской (user) записи, а не на уровне системы: `python3 -m ipykernel install --user --name=ch01_extra --display-name="Chapter01 (Extra)"` - это ядро с (внутренним) именем`ch01_extra` и внешним (отображаемым) именем `Chapter01 (Extra)`, которое и будет видно в Джупитере.
 
-Остаётся зарегистрировать ядро (грубо говоря, Python), причём лишь для моей учётной пользовательской (user) записи, а не на уровне системы: `python3 -m ipykernel install --user --name=ch01_extra --display-name="Chapter01 (Extra)"` - это ядро с (внутренним) именем`ch01_extra` и внешним (отображаемым) именем `Chapter01 (Extra)`, которое и будет видно в Джупитере.
-
-И на самом деле потребуется ещё установить `pip` в виртуальное окружение, чтобы команда `%pip install toml` установила сторонний пакет toml. Заметьте, что команду нужно начинать с процента (%), а не восклицательного знака (!), потому что:
+> На самом деле потребуется ещё установить `pip` в виртуальное окружение, чтобы в тетрадке сработала команда `%pip install toml`, а uv по умолчанию не устанавливает pip в виртуальное окружение ибо незачем когда есть собственный `uv pip`. (Едва) Заметно, что команду нужно начинать с процента (%), а не восклицательного знака (!), потому что:
 
 - % - запуск pip для текущего ядра, именно поэтому потребовалось установить pip в текущее виртуальное окружение, потому что uv при создании окружения не устанавливает в него pip по умолчанию (ибо имеет свой `uv pip`);
-- ! - запуск через системную оболочку, что приведёт к уже виденной ошибке.
+- ! - запуск через системную оболочку, что приведёт к уже виденной (c'est déjà vu, putain) ошибке.
 
 Подробнее о встроенных волшебных командах в [документации IPython](https://ipython.readthedocs.io/en/stable/interactive/magics.html).
 
-Всё, этого достаточно, заметка кончена. Когда понадобится подключить [Cython](https://cython.org/) и поиграться с ним в Jupyter Notebook, во всяком случае ожидаю меньше расследований (но Cython кажется подозрительным типом, так что все подробности в соответственной главе).
+Фух, заметка кончена, но "здесевый" опыт пригодится когда понадобится поиграться с [Cython](https://cython.org/).
 
 ## Cсылки
 
