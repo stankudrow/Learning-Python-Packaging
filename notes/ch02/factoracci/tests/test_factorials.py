@@ -1,14 +1,14 @@
 import pytest
 
-from factoracci import (
+from factoracci.factorials import (
     factorial_iterative_memoized,
     factorial_iterative_naive,
-    factorial_recursive_memoized_top_down,
+    factorial_recursive_memoized,
     factorial_recursive_naive,
 )
 
 
-def _get_first_ten_factorial_pairs() -> list[tuple[int, int]]:
+def _get_factorial_head() -> list[tuple[int, int]]:
     return [
         (0, 1),
         (1, 1),
@@ -26,7 +26,7 @@ def _get_first_ten_factorial_pairs() -> list[tuple[int, int]]:
 
 @pytest.mark.parametrize(
     ("n", "expected"),
-    _get_first_ten_factorial_pairs(),
+    _get_factorial_head(),
 )
 def test_naive_factorials(n: int, expected: int) -> None:
     res_iter = factorial_iterative_naive(n)
@@ -36,9 +36,9 @@ def test_naive_factorials(n: int, expected: int) -> None:
 
 @pytest.mark.parametrize(
     ("n", "expected"),
-    _get_first_ten_factorial_pairs(),
+    _get_factorial_head(),
 )
 def test_memoized_factorials(n: int, expected: int) -> None:
     res_iter = factorial_iterative_memoized(n)
-    res_rec = factorial_recursive_memoized_top_down(n)
+    res_rec = factorial_recursive_memoized(n)
     assert res_iter == res_rec == expected
