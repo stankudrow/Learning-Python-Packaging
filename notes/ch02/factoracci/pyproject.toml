@@ -2,6 +2,8 @@
 requires = [
     "setuptools~=84.0",
     "cython~=3.3",  # installed at build-time (only)
+    # In this project I preferred cythonisation by default,
+    # which means that Cython assets are available in this Python package.
 ]
 build-backend = "setuptools.build_meta"
 
@@ -16,25 +18,16 @@ authors = [
 requires-python = "~=3.14.0"  # only Python 3.14.*
 dependencies = []
 
-[project.optional-dependencies]
-# uv add --optional cy cython
-cy = [
-    "cython~=3.3",
-]
-# Optional dependency = extra (dependency)
-# Installable via `uv pip install "factoracci[cy]"` (or just ".[cy]" if "pwd == Path(__file__).parent")
-
-# In this project I preferred cythonisation with "setup.py" file.
-
+# In this project I prefer an oldie-but-goldie "setup.py"
 # [tool.setuptools]
 # packages = ["factoracci"]
 # package-dir = {"" = "src"}
 #
-# [tool.setuptools.extensions]
-# factoracci._factoracci = { sources = ["src/factoracci/_factoracci.pyx"] }
+# [[tool.setuptools.ext-modules]]
+# name = "factoracci._factoracci"
+# sources = ["src/factoracci/_factoracci.pyx"]
 
-# dev dependencies
-[dependency-groups]
+[dependency-groups]  # dev dependencies
 # uv add --group doc sphinx
 doc = [
     "sphinx>=9.1.0",

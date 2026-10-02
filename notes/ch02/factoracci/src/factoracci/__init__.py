@@ -14,7 +14,6 @@ __all__ = [
     "factorial_recursive_naive",
 ]
 
-with suppress(ImportError):
-    from factoracci._factoracci import factorial as factorial_cython
+from factoracci._factoracci import factorial as factorial_cython
 
-    __all__ += ["factorial_cython"]
+__all__ += ["factorial_cython"]

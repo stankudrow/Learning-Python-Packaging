@@ -1,19 +1,12 @@
-from contextlib import suppress
-
 import pytest
 
 from factoracci import (
+    factorial_cython,
     factorial_iterative_memoized,
     factorial_iterative_naive,
     factorial_recursive_memoized,
     factorial_recursive_naive,
 )
-
-_CYTHON_AVAILABLE = False
-with suppress(ImportError):
-    from factoracci import factorial_cython
-
-    _CYTHON_AVAILABLE = True
 
 
 def _get_factorial_head() -> list[tuple[int, int]]:
@@ -52,10 +45,6 @@ def test_memoized_factorials(n: int, expected: int) -> None:
     assert res_iter == res_rec == expected
 
 
-@pytest.mark.skipif(
-    not _CYTHON_AVAILABLE,
-    reason="Cython extension not built/importable; skipping Cython-based tests",
-)
 @pytest.mark.parametrize(
     ("n", "expected"),
     _get_factorial_head(),
