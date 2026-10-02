@@ -1,5 +1,8 @@
 [build-system]
-requires = ["setuptools~=84.0"]
+requires = [
+    "setuptools~=84.0",
+    "cython~=3.3",  # installed at build-time (only)
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -10,8 +13,25 @@ readme = "README.md"
 authors = [
     { name = "Stanley Kudrow", email = "stankudrow@reply.no" }
 ]
-requires-python = "~=3.14.0"
+requires-python = "~=3.14.0"  # only Python 3.14.*
 dependencies = []
+
+[project.optional-dependencies]
+# uv add --optional cy cython
+cy = [
+    "cython~=3.3",
+]
+# Optional dependency = extra (dependency)
+# Installable via `uv pip install "factoracci[cy]"` (or just ".[cy]" if "pwd == Path(__file__).parent")
+
+# In this project I preferred cythonisation with "setup.py" file.
+
+# [tool.setuptools]
+# packages = ["factoracci"]
+# package-dir = {"" = "src"}
+#
+# [tool.setuptools.extensions]
+# factoracci._factoracci = { sources = ["src/factoracci/_factoracci.pyx"] }
 
 # dev dependencies
 [dependency-groups]
@@ -24,10 +44,9 @@ lint = [
     "ruff>=0.16.9",
     "ty>=0.0.84",
 ]
-# uv add --group test pytest pytest-benchmark pytest-cov pytest-random-order
+# uv add --group test pytest pytest-cov pytest-random-order
 test = [
     "pytest>=9.1.1",
-    "pytest-benchmark>=5.3.0",
     "pytest-cov>=7.1.0",
     "pytest-random-order>=1.2.0",
 ]
@@ -91,6 +110,7 @@ fixable = [
 "*.ipynb" = [
     "T20",  # https://docs.astral.sh/ruff/rules/#flake8-print-t20
 ]
+"setup.py" = ["D"]
 
 [tool.ruff.format]
 docstring-code-format = true
