@@ -94,4 +94,4 @@ Legend:
   OPS: Operations Per Second, computed as 1 / Mean
 ```
 
-Memoisation is cool!
+Memoisation is powerful! Here (and keep that in mind), Cython-based memoisation beats the naive approach in both cases, yet memosed solution overwhelms even cythonic implementations.

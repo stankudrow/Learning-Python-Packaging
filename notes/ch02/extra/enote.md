@@ -8,7 +8,7 @@
 4. `uv pip install cython` - установка пакета [Cython](https://cython.org/);
 5. `jupyter notebook` - запуск "Jupyter Notebook" сервера.
 
-И вот в ячейке файла [cython.ipynb](./cython.ipynb) я хочу выполнить команду `%load_ext cython` и...да что ж такое:
+И вот в ячейке файла [cython.ipynb][cy_note] я хочу выполнить команду `%load_ext cython` и...да что ж такое:
 
 ```
 ---------------------------------------------------------------------------
@@ -39,4 +39,8 @@ ModuleNotFoundError: No module named 'distutils'
 - `uv pip list` - какие пакеты установлены в среде;
 - `uv pip freeze > requirements.txt` - сохраняет список пакетов среды в файл `requirements.txt`;
 
-Оказалось, что есть и более "зернистый" (гранулярный) и не тернистый способ получить зависимости: не скопом, лишь нужное. Достаточно прописать файл [requirements.in](./requirements.in) и выполнить `uv pip compile requirements.in -o requirements.txt` и получить файл [requirements.txt](./requirements.txt) на основе зависимостей из "requirements.in".
+Оказалось, что есть и более "зернистый" (гранулярный) и не тернистый способ получить зависимости: не скопом, лишь нужное. Достаточно прописать файл [requirements.in][reqs_in] и выполнить `uv pip compile requirements.in -o requirements.txt` и получить файл [requirements.txt][reqs_out] на основе зависимостей из "requirements.in". Для чистоты исполнения, зачищу окружение (`uv pip freeze | xargs uv pip uninstall -y`) и установлю все зависимости из "requirements.txt" (`uv pip install -r requirements.txt`). Косвенная проверка тетрадки [cython.ipynb][cy_note] прошла без провалов.
+
+[cy_note]: ./cython.ipynb
+[reqs_in]: ./requirements.in
+[reqs_out]: ./requirements.txt
