@@ -21,4 +21,5 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     ext_modules=extensions,
+    # and no need in `cythonize` here :)
 )

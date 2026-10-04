@@ -33,3 +33,10 @@ ModuleNotFoundError: No module named 'distutils'
 ```
 
 Потому что модуль [distutils](https://docs.python.org/3.14/library/distutils.html#module-distutils) был удалён в Python 3.12 согласно [PEP 632](https://peps.python.org/pep-0632/). Решение: установить [setuptools](https://setuptools.pypa.io/en/latest/) (`uv pip install setuptools`), потому что он предоставляет замену для `distutils` и умеет подменять его во "внесках" (импортах).
+
+Про [requirements.txt](./requirements.txt):
+
+- `uv pip list` - какие пакеты установлены в среде;
+- `uv pip freeze > requirements.txt` - сохраняет список пакетов среды в файл `requirements.txt`;
+
+Оказалось, что есть и более "зернистый" (гранулярный) и не тернистый способ получить зависимости: не скопом, лишь нужное. Достаточно прописать файл [requirements.in](./requirements.in) и выполнить `uv pip compile requirements.in -o requirements.txt` и получить файл [requirements.txt](./requirements.txt) на основе зависимостей из "requirements.in".

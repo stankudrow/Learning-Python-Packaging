@@ -10,7 +10,7 @@
 - [Динамическое программирование](#динамическое-программирование)
 - [Cython](#cython)
 - [Тестирование](#тестирование)
-- [Документация](#документация)
+- [Итоги](#итоги)
 
 ### Библиотека
 
@@ -143,30 +143,34 @@ Cython - это и язык программирования, и компиля�
 
 Здесь я не предпринимаю попытки писать руководство за Cython, за этим в [официальную документацию](https://cython.readthedocs.io/en/latest/index.html), а также [Wiki](https://github.com/cython/cython/wiki).
 
-Для "сайтонования" (cythonisation) проекта, т.е. возможности пользоваться Cython кодом из Python проекта. Для этого я использую старый и пока добрый файл "setup.py", который пока не [устарел](https://packaging.python.org/en/latest/discussions/setup-py-deprecated/), как и setuptools. При этом оставлены разделы в файле "pyproject.toml" проекта, которые позволяют делать ту же работу, но без "setup.py" файла (ну вдруг совсем бесит).
+Для "сайтонования" (cythonisation) проекта, т.е. возможности пользоваться Cython кодом из Python проекта. Для этого я использую старый и пока добрый файл "setup.py", который пока не [устарел](https://packaging.python.org/en/latest/discussions/setup-py-deprecated/), как и setuptools. При этом оставлены разделы в файле "pyproject.toml" проекта, которые позволяют делать ту же работу, но без "setup.py" файла (если совсем бесит).
 
-В этом проекте Cython используется в качестве обязательной зависимости для сборки, а значит Cython модули будут доступны при установке проекта. Помните, что возможно для вашей платформы потребуется устновка именно из архива исходников (sdist). А ещё `uv build` выявил проблему:
+В этом проекте Cython используется в качестве обязательной зависимости для сборки, а значит Cython модули будут транслирваны и откомпилированы при установке проекта. Вот как дружат Cython и Python при сборке (взято из книги "Publishing Python Packages"):
+
+![Cython and Python built](./img/cython_python.png)
+
+Помните, что возможно для вашей платформы потребуется устновка именно из архива исходников (sdist). А ещё `uv build` выявил проблему:
 
 ```shell
 running check
-creating factoracci-0.1.0
-creating factoracci-0.1.0/src/factoracci
-creating factoracci-0.1.0/src/factoracci.egg-info
-creating factoracci-0.1.0/tests
-copying files to factoracci-0.1.0...
-copying README.md -> factoracci-0.1.0
-copying pyproject.toml -> factoracci-0.1.0
-copying setup.py -> factoracci-0.1.0
-copying src/factoracci/__init__.py -> factoracci-0.1.0/src/factoracci
-copying src/factoracci/_factoracci.c -> factoracci-0.1.0/src/factoracci
-copying src/factoracci/factorials.py -> factoracci-0.1.0/src/factoracci
-copying src/factoracci/fibonacci.py -> factoracci-0.1.0/src/factoracci
-copying src/factoracci/py.typed -> factoracci-0.1.0/src/factoracci
+creating factoracci-0.2.0
+creating factoracci-0.2.0/src/factoracci
+creating factoracci-0.2.0/src/factoracci.egg-info
+creating factoracci-0.2.0/tests
+copying files to factoracci-0.2.0...
+copying README.md -> factoracci-0.2.0
+copying pyproject.toml -> factoracci-0.2.0
+copying setup.py -> factoracci-0.2.0
+copying src/factoracci/__init__.py -> factoracci-0.2.0/src/factoracci
+copying src/factoracci/_factoracci.c -> factoracci-0.2.0/src/factoracci
+copying src/factoracci/factorials.py -> factoracci-0.2.0/src/factoracci
+copying src/factoracci/fibonacci.py -> factoracci-0.2.0/src/factoracci
+copying src/factoracci/py.typed -> factoracci-0.2.0/src/factoracci
 ```
 
-Си файл пошёл в архив, а вот .pyx файл не виден, а значит не попал в "издаток" (sdist), а значит нужен MANIFEST.in, где явно прописать включение Cython модулей. Было много проблем, изучите как pyproject.toml, так и setup.py, а также помните про `uv build --no-cache` и подчистку артефактов вроде "factoracci.egg-info" если вдург будут проблемы вроде безотносительных (абсолютных) путей к Cython модулям и тому прочее (ну и доки, поисковики да нейронки).
+Си файл пошёл в архив, а вот ".pyx" файл не виден, а значит не попал в "издаток" (sdist), а значит нужен MANIFEST.in, где нужно явно прописать включение Cython модулей. Хватило проблем, в частности помогли простая подчистика артефактов вроде "factoracci.egg-info" и сборка без кэша `uv build --no-cache` - на всякий случай.
 
-Также оставил допзаметку об лёгком введении в Cython на примере разработки "_factoracci.pyx" модуля и особенностях языка (а заодно использования Cython в Jupyter Notebook). Кстати, Cython основан на проекте Pyrex, отсюда расширение `.pyx`, а не `.cy`, например.
+Можете посмотреть [допзаметку](./extra/enote.md) о лёгком введении в Cython на примере разработки модуля "_factoracci.pyx". Кстати, Cython был основан на проекте Pyrex, отсюда расширение файлоы `.pyx`, а не, скажем, `.cy`.
 
 ### Тестирование
 
@@ -177,11 +181,25 @@ copying src/factoracci/py.typed -> factoracci-0.1.0/src/factoracci
 - [pytest-cov](https://pytest-cov.readthedocs.io/) - покрытие кода, т.е. какие части кода были выполнены испытами (тестами).
 - [pytest-random-order](https://pypi.org/project/pytest-random-order//) - выполнение тестов в "ослучайненном" (рандомизированном) порядке.
 
-Их пока более чем достаточно, тем более о покрытии стоит сказать чуть больше, хотя и несколько позже.
+Напоминалка как pytest обнаруживает (discovers) испыты (из книги "Publishing Python Packages"):
 
-### Документация
+![Pytest discovers tests](./img/pytest_discoverage.png)
 
-...
+### Итоги
 
+На таком простом проекте удалось:
 
-[extra]: ./extra
+- сделать разные имплементации классических алгоритмов вычислительной науки (computer science);
+- добавить реализации на Cython и посмотреть их на деле;
+- собрать проект с помощью файла "setup.py", но оставлены записи в "pyproject.toml", с которыми можно и без "setup.py";
+- добавить покрытие (coverage) и "ослучайненный" (рандомизированный) прогон испытов/тестов на каждый запуск.
+- ну и Makefile для автоматизации запуска частых команд ибо без этого чуть позадолбнее пропускать причёсыватели (линтеры), испытания, сборку и тому прочее.
+
+Что я решил не делать ибо устал, но нужно уже в следующей [заметке](../ch03/note.md):
+
+- "повыборные" (optional) зависимости, или "допы" (extras) - здесь не пригодились, потому что Cython как допзависимость не нужна, ибо он обязателен при сборке, прописан явно, а значит cython файлы будут обработано и положены в сборку;
+- автоматическое порождение (генерация) документации из исходников - здесь выбираю [sphinx](https://www.sphinx-doc.org/en/master/index.html)
+- вместо [make](https://www.gnu.org/software/make/) стану использовать [just](https://github.com/casey/just)
+- внедрение [tox](https://pypi.org/project/tox/) - это не только про испытывание/тестирование для разных Python версий, но и про автоматизацию иных проверок (об этом потом, можете уже сейчас посмотреть [tox wiki](https://tox.wiki/en/4.64.8/))
+
+Пока и так сойдёт :)

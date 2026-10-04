@@ -1,3 +1,8 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 import pytest
 
 from factoracci import (
@@ -26,6 +31,21 @@ def _get_factorial_head() -> list[tuple[int, int]]:
 
 
 @pytest.mark.parametrize(
+    "func",
+    [
+        factorial_cython,
+        factorial_iterative_memoized,
+        factorial_iterative_naive,
+        factorial_recursive_memoized,
+        factorial_recursive_naive,
+    ],
+)
+def test_invalid_input(func: Callable[[int], int]) -> None:
+    with pytest.raises(ValueError):  # noqa: PT011
+        func(-1)
+
+
+@pytest.mark.parametrize(
     ("n", "expected"),
     _get_factorial_head(),
 )
@@ -49,5 +69,21 @@ def test_memoized_factorials(n: int, expected: int) -> None:
     ("n", "expected"),
     _get_factorial_head(),
 )
-def test_cython_factorial(n: int, expected: int) -> None:
+def test_cythonic_factorial(n: int, expected: int) -> None:
     assert factorial_cython(n) == expected
+
+
+@pytest.mark.parametrize(
+    "func",
+    [factorial_iterative_naive, factorial_iterative_memoized, factorial_cython],
+    ids=lambda f: f.__name__,
+)
+@pytest.mark.parametrize("n", [1, 10, 50])
+@pytest.mark.bench
+def test_factorial_performance(
+    func: Callable[[int], int],
+    n: int,
+    benchmark,  # noqa: ANN001
+) -> None:
+    result = benchmark(func, n)
+    assert result == func(n)

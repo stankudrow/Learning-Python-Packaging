@@ -3,13 +3,13 @@ requires = [
     "setuptools~=84.0",
     "cython~=3.3",  # installed at build-time (only)
     # In this project I preferred cythonisation by default,
-    # which means that Cython assets are available in this Python package.
+    # which means that Cython artifacts are available in the package.
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "factoracci"
-version = "0.1.0"
+version = "0.2.0"
 description = "Implementations of factorial and Fibonacci algorithms"
 readme = "README.md"
 authors = [
@@ -18,7 +18,7 @@ authors = [
 requires-python = "~=3.14.0"  # only Python 3.14.*
 dependencies = []
 
-# In this project I prefer an oldie-but-goldie "setup.py"
+# # In this project I prefer an oldie-maybe-goldie "setup.py"
 # [tool.setuptools]
 # packages = ["factoracci"]
 # package-dir = {"" = "src"}
@@ -28,10 +28,6 @@ dependencies = []
 # sources = ["src/factoracci/_factoracci.pyx"]
 
 [dependency-groups]  # dev dependencies
-# uv add --group doc sphinx
-doc = [
-    "sphinx>=9.1.0",
-]
 # uv add --group lint ruff ty
 lint = [
     "ruff>=0.16.9",
@@ -40,18 +36,54 @@ lint = [
 # uv add --group test pytest pytest-cov pytest-random-order
 test = [
     "pytest>=9.1.1",
+    "pytest-benchmark>=5.3.0",
     "pytest-cov>=7.1.0",
     "pytest-random-order>=1.2.0",
 ]
+
+[tool.coverage.run]
+source = ["src/factoracci"]
+branch = true  # not only lines of code, but also branches (if/else)
+relative_files = true  # not absolute paths
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "*/conftest.py",
+    "setup.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+precision = 2
+fail_under = 80  # %
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "def __str__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+title = "factoracci coverage"
 
 # https://docs.pytest.org/en/stable/reference/customize.html
 [tool.pytest]
 minversion = "9.1"
 addopts = [
     "--maxfail=2",
-    "--random-order"
+    "--random-order",
+    "-m", "not bench"  # benchmarking is excluded by default
 ]
 testpaths = ["tests"]
+markers = [
+    "bench: performance benchmarks (deselected by default)"
+]
 
 # https://docs.astral.sh/ruff/configuration/
 # https://docs.astral.sh/ruff/rules/

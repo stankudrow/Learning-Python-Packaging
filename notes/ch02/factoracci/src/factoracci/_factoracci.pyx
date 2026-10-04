@@ -15,3 +15,15 @@ def factorial(int n):
     for i in range(2, n + 1):
         f *= i
     return f
+
+
+def fibonacci(int nth):
+    if nth < 1:
+        msg = "n must be a positive integer"
+        raise ValueError(msg) from None
+    if nth < 3:
+        return 1
+    cdef object a = 1, b = 1
+    for _ in range(2, nth):
+        a, b = b, a + b
+    return b
